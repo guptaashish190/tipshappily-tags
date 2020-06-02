@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const app = express();
 const port = 8345;
-const tagPageServer "http://localhost:5000";
+const tagPageServer =  "http://localhost:5000";
 
 function getPageName(tagtypeid) {
     let pageName;
