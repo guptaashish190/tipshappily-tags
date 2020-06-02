@@ -2,7 +2,8 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 
 const app = express();
-const port = 3000;
+const port = 8345;
+const tagPageServer "http://localhost:5000";
 
 function getPageName(tagtypeid) {
     let pageName;
@@ -53,7 +54,7 @@ async function printPDF(image, title, desc, qrdata, tagtypeid) {
 
     const tag_page_url = getPageName(tagtypeid);
 
-    await page.goto(`http://127.0.0.1:5500/tag_designs/${tag_page_url}?title=${title}&qrdata=${qrdata}&image=${image}&desc=${desc}`, { waitUntil: 'networkidle0' });
+    await page.goto(`${tagPageServer}/tag_designs/${tag_page_url}?title=${title}&qrdata=${qrdata}&image=${image}&desc=${desc}`, { waitUntil: 'networkidle0' });
     const pdf = await page.pdf({ format: 'A4' });
 
     await browser.close();
