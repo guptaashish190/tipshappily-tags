@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const app = express();
 const port = 8345;
-const tagPageServer =  "http://localhost:5000";
+const tagPageServer = "http://localhost:5000";
 
 function getPageName(tagtypeid) {
     let pageName;
@@ -49,11 +49,13 @@ function getPageName(tagtypeid) {
 }
 
 async function printPDF(image, title, desc, qrdata, tagtypeid) {
-    const browser = await puppeteer.launch({ headless: true ,
-    args: [
-      'no-sandbox',
-      'disable-setuid-sandbox',
-    ]});
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: [
+            '--no-sandbox',
+        ],
+        timeout: 10000,
+    });
     const page = await browser.newPage();
 
     const tag_page_url = getPageName(tagtypeid);
