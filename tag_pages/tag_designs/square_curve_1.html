@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        .main {
+            position: relative;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h4 {
+            margin-top: 7px;
+        }
+
+        #title {
+            position: absolute;
+            top: 190px;
+            left: 150px;
+            text-align: center;
+            width: 200px;
+            word-wrap: break-word;
+            font-weight: 700;
+        }
+
+        #qrcode {
+            position: absolute;
+            left: 200px;
+            bottom: 80px;
+        }
+
+        #profilepic {
+            border-radius: 50%;
+            top: 102px;
+            left: 210px;
+            position: absolute;
+            width: 80px;
+            height: 80px;
+
+        }
+
+        #desc {
+            font-size: 0.9em;
+            font-weight: 300;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="main">
+        <img src="../images/square-curve1.png" width="500" height="500" />
+        <h3 id="title">
+        </h3>
+
+        <div id="qrcode"></div>
+        <img id="profilepic" src="#" />
+    </div>
+
+    <script src="../qr/qrcode.min.js"></script>
+    <script>
+
+        var urlParams = new URLSearchParams(window.location.search);
+
+        const title = document.getElementById("title");
+        const profilepic = document.getElementById("profilepic");
+        const desc = document.getElementById("desc");
+
+        profilepic.setAttribute("src", urlParams.get("image"));
+        title.innerHTML = urlParams.get("title") + "<h4 id='desc'>" + urlParams.get("desc") + "</h4>";
+
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: urlParams.get("qrdata"),
+            width: 96,
+            height: 96,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+    </script>
+</body>
+
+</html>
