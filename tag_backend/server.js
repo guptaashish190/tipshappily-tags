@@ -59,7 +59,7 @@ async function printPDF(image, title, desc, qrdata, tagtypeid) {
     const page = await browser.newPage();
 
     const tag_page_url = getPageName(tagtypeid);
-
+    image = encodeURIComponent(image);
     await page.goto(`${tagPageServer}/tag_designs/${tag_page_url}?title=${title}&qrdata=${qrdata}&image=${image}&desc=${desc}`, { waitUntil: 'networkidle0' });
     const pdf = await page.pdf({ format: 'A4' });
 
@@ -86,7 +86,7 @@ app.get('/gettag', (req, res) => {
 
     console.log("-----------------");
     if (!image || !title || !desc || !qrdata || !tagtypeid) {
-        res.send("All fields required");
+        res.send("All fields required!");
     }
     printPDF(image, title, desc, qrdata, tagtypeid).then(pdf => {
         res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
