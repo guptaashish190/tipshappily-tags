@@ -8,40 +8,40 @@ const tagPageServer = "http://localhost:5000";
 function getPageName(tagtypeid) {
     let pageName;
     switch (tagtypeid) {
-        case '1Ah68S0YX6iCDdlHUCJF':
+        case 't94RaJbYDkRZb5ajhzeI':
             pageName = "rect_curve_1";
             break;
-        case '3UOOrY0q25Ct9klWTx5b':
+        case 'lXJREkHUnfH1kgqioMCK':
             pageName = "rect_straight_1";
             break;
-        case '3d89FnlQhE5tUyjMRcgk':
+        case 'AeLywdduznpSrQOc1zIx':
             pageName = "square_curve_1";
             break;
-        case 'A5YdVk3WuzK9se94OZtf':
+        case 'BQbnhBc0QQ0IlQN2OP8v':
             pageName = "rect_curve_3";
             break;
-        case 'CAqhgKstXScxAKLIl4Cj':
+        case 'KtHvazHr91pJFPr5Utvs':
             pageName = "square_curve_3";
             break;
-        case 'Dy6fxMAOgqw6QA1Rb0U8':
+        case 'uNnmea2WS2zNaBtI7nuM':
             pageName = "rect_curve_2";
             break;
-        case 'HklS1AKdjzZtOGZCGSV1':
+        case 'CImPPzxLN01WngWcTuY6':
             pageName = "round_curve_3";
             break;
-        case 'NrXmKNMxPTmULTHykOfu':
+        case 'uPMvnJGRbzDfDx6TCAxa':
             pageName = "round_curve_1";
             break;
-        case 'TjQLszhLuNY33l4DhLcQ':
+        case 'XQ0rV7yYJk3xjTejXYNO':
             pageName = "square_curve_2";
             break;
-        case 'aydiaE85pJGDYeTjfB0o':
+        case 'yzD3acjbq344oGAErrk7':
             pageName = "square_straight_1";
             break;
-        case 'hq6P8lvebYRJZxz7jOOY':
+        case 'lhitAuvALJJNKp0cfcEY':
             pageName = "round_straight_1";
             break;
-        case 'mCU01giWFCbkCHNhusTY':
+        case 'RsBhRPH7ujc6eh1WWUhU':
             pageName = "round_curve_2";
             break;
     }
