@@ -166,6 +166,7 @@ router.post('/business/distribute', (req, res) => {
             const userTransactionHistoryDocId = (await admin.firestore().collection('transactions').doc(userId).collection('history').doc().get()).id;
 
             const promises = [];
+            console.log(receiverData);
             receiverData.forEach(async receiver => {
 
                 const receiverRef = admin.firestore().collection('transactions').doc(receiver.id)
