@@ -3,12 +3,7 @@ var router = express.Router()
 
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../tipshappily-b0541-firebase-adminsdk-q5upx-7727e52ffc.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://tipshappily-b0541.firebaseio.com"
-});
+admin.initializeApp();
 
 router.post('/tip/handleWalletTransaction', async (req, res) => {
 
