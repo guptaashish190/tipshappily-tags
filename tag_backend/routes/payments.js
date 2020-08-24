@@ -58,26 +58,26 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
             const senderRef = admin.firestore().collection('transactions').doc(senderId);
 
             const senderRefData = (await senderRef.get()).data();
-            await senderRef.set({
+            await senderRef.update({
                 walletAmount: senderRefData.walletAmount - senderData.amount
             });
 
             const receiverRefData = (await receiverRef.get()).data();
-            if (isBusinessPayment === true) {
+            if (isBusinessPayment) {
                 const businessRef = admin.firestore().collection('business').doc(req.body.businessData.receivingBusinessId);
                 businessDoc = (await businessRef.get()).data;
 
                 if (businessDoc["employeeKeeps"]) {
-                    await receiverRef.set({
+                    await receiverRef.update({
                         walletAmount: receiverRefData.walletAmount + senderData.amount,
                     });
                 } else {
-                    await businessRef.set({
+                    await businessRef.update({
                         businessWallet: businessDoc.businessWallet + senderData.amount,
                     });
                 }
             } else {
-                await receiverRef.set({
+                await receiverRef.update({
                     walletAmount: receiverRefData.walletAmount + senderData.amount,
                 });
             }
@@ -127,7 +127,7 @@ router.post('/shop/handleWalletTransaction', (req, res) => {
             const userRef = admin.firestore().collection('transactions').doc(userId);
 
             const userRefData = (await userRef.get()).data();
-            await userRef.set({
+            await userRef.update({
                 walletAmount: userRefData.walletAmount - newTransactionData.amount
             });
             res.json({
@@ -187,7 +187,7 @@ router.post('/business/distribute', (req, res) => {
                 promises.push(receiverRef.collection('history').add(data));
 
                 const walletAmountReceiver = (await receiverRef.get()).data().walletAmount;
-                await receiverRef.set({
+                await receiverRef.update({
                     walletAmount: walletAmountReceiver + receiver.amount
                 });
             });
@@ -197,7 +197,7 @@ router.post('/business/distribute', (req, res) => {
             const businessRef = admin.firestore().collection('business').doc(businessId);
 
             const businessWalletAmount = (await businessRef.get()).data().businessWallet;
-            await businessRef.set({
+            await businessRef.update({
                 businessWallet: businessWalletAmount - totalTip
             });
         }).catch(function (error) {
