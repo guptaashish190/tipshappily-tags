@@ -170,7 +170,7 @@ router.post('/business/distribute', (req, res) => {
 
                 const receiverRef = admin.firestore().collection('transactions').doc(receiver.id)
                 const data = {
-                    "timestamp": new DateTime.now().millisecondsSinceEpoch,
+                    "timestamp": new Date().getTime(),
                     "type": "TipToBusinessEmployee",
                     "merchant": "Wallet",
                     "response": "success",
