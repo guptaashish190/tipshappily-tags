@@ -3,14 +3,26 @@ var router = express.Router()
 
 var admin = require("firebase-admin");
 
+var serviceAccount = require("../admin_sdk_config.json");
+
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
-    databaseURL: 'https://tipshappily-b0541.firebaseio.com'
+    databaseURL: "https://tipshappily-b0541.firebaseio.com"
 });
 
 router.post('/tip/handleWalletTransaction', async (req, res) => {
 
-    const { idToken, transactionData, receiverId, isBusinessPayment } = req.body;
+    const { transactionData, receiverId, isBusinessPayment } = req.body;
+
+    let idToken;
+    if (authHeader) {
+        idToken = authHeader.split(' ')[1];
+    } else {
+        return res.status(403).json({
+            error: true,
+            message: "Unauthorized"
+        });
+    }
 
     admin.auth().verifyIdToken(idToken)
         .then(async function (decodedToken) {
@@ -79,7 +91,7 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
             });
         }).catch(function (error) {
             console.log(error)
-            res.json({
+            res.status(400).json({
                 error: true,
                 message: error
             });
@@ -87,7 +99,19 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
 });
 router.post('/shop/handleWalletTransaction', (req, res) => {
 
-    const { idToken, transactionData } = req.body;
+    const { transactionData } = req.body;
+
+    const authHeader = req.headers.authorization;
+
+    let idToken;
+    if (authHeader) {
+        idToken = authHeader.split(' ')[1];
+    } else {
+        return res.status(403).json({
+            error: true,
+            message: "Unauthorized"
+        });
+    }
 
     admin.auth().verifyIdToken(idToken)
         .then(async function (decodedToken) {
@@ -114,11 +138,78 @@ router.post('/shop/handleWalletTransaction', (req, res) => {
             });
         }).catch(function (error) {
             console.log(error)
-            res.json({
+            res.status(400).json({
                 error: true,
                 message: error
             });
         });
+});
+
+router.post('/business/distribute', (req, res) => {
+    const { businessId, receiverData, currency, currencyUnicode, totalTip } = req.body;
+
+    const authHeader = req.headers.authorization;
+
+    let idToken;
+    if (authHeader) {
+        idToken = authHeader.split(' ')[1];
+    } else {
+        return res.status(403).json({
+            error: true,
+            message: "Unauthorized"
+        });
+    }
+
+    admin.auth().verifyIdToken(idToken)
+        .then(async function (decodedToken) {
+
+            let userId = decodedToken.uid;
+
+            const userTransactionHistoryDocId = (await admin.firestore().collection('transactions').doc(userId).collection(history).doc().get()).id;
+
+            const promises = [];
+            receiverData.forEach(receiver => {
+
+                const receiverRef = admin.firestore().collection('transactions').doc(receiver.id)
+
+                const data = {
+                    "timestamp": new DateTime.now().millisecondsSinceEpoch,
+                    "type": "TipToBusinessEmployee",
+                    "merchant": "Wallet",
+                    "response": "success",
+                    "TransactionDocId": userTransactionHistoryDocId,
+                    "UserId": userId,
+                    "currency": currency,
+                    "currencyUnicode": currencyUnicode,
+                    "amount": receiver.amount,
+                    "role": "receiver",
+                    "ReceivingUserId": receiver.id,
+                    "userMessage": "Business Tip",
+                };
+                promises.add(receiverRef.collection('history').add(data));
+
+                const walletAmountReceiver = (await receiverRef.get()).walletAmount;
+                await receiverRef.set({
+                    walletAmount: walletAmountReceiver + receiver.amount
+                });
+            });
+
+            await Promise.all(promises);
+
+            const businessRef = admin.firestore().collection('business').doc(businessId);
+
+            const businessWalletAmount = (await businessRef.get()).businessWallet;
+            await businessRef.set({
+                businessWallet: businessWalletAmount - totalTip
+            });
+        }).catch(function (error) {
+            console.log(error);
+            res.status(400).json({
+                error: true,
+                message: error
+            });
+        });
+
 });
 
 module.exports = router
