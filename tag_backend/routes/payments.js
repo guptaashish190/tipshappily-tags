@@ -168,10 +168,9 @@ router.post('/business/distribute', (req, res) => {
             const userTransactionHistoryDocId = (await admin.firestore().collection('transactions').doc(userId).collection(history).doc().get()).id;
 
             const promises = [];
-            receiverData.forEach(receiver => {
+            receiverData.forEach(async receiver => {
 
                 const receiverRef = admin.firestore().collection('transactions').doc(receiver.id)
-
                 const data = {
                     "timestamp": new DateTime.now().millisecondsSinceEpoch,
                     "type": "TipToBusinessEmployee",
