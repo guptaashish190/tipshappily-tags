@@ -12,6 +12,7 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
 
     const { transactionData, receiverId, isBusinessPayment } = req.body;
 
+    const authHeader = req.headers.authorization;
     let idToken;
     if (authHeader) {
         idToken = authHeader.split(' ')[1];
