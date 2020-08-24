@@ -201,6 +201,10 @@ router.post('/business/distribute', (req, res) => {
             await businessRef.update({
                 businessWallet: businessWalletAmount - totalTip
             });
+            res.json({
+                error: false,
+                message: 'success'
+            });
         }).catch(function (error) {
             console.log(error);
             res.status(400).json({
