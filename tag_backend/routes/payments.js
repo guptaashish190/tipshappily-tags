@@ -3,8 +3,6 @@ var router = express.Router()
 
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../admin_sdk_config.json");
-
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: "https://tipshappily-b0541.firebaseio.com"
