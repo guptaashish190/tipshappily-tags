@@ -163,7 +163,7 @@ router.post('/business/distribute', (req, res) => {
 
             let userId = decodedToken.uid;
 
-            const userTransactionHistoryDocId = (await admin.firestore().collection('transactions').doc(userId).collection(history).doc().get()).id;
+            const userTransactionHistoryDocId = (await admin.firestore().collection('transactions').doc(userId).collection('history').doc().get()).id;
 
             const promises = [];
             receiverData.forEach(async receiver => {
@@ -183,7 +183,8 @@ router.post('/business/distribute', (req, res) => {
                     "ReceivingUserId": receiver.id,
                     "userMessage": "Business Tip",
                 };
-                promises.add(receiverRef.collection('history').add(data));
+
+                promises.push(receiverRef.collection('history').add(data));
 
                 const walletAmountReceiver = (await receiverRef.get()).data().walletAmount;
                 await receiverRef.set({
