@@ -13,6 +13,7 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
     const { transactionData, receiverId, isBusinessPayment } = req.body;
 
     const authHeader = req.headers.authorization;
+    console.log(req.headers)
     let idToken;
     if (authHeader) {
         idToken = authHeader.split(' ')[1];
@@ -57,13 +58,12 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
             const senderRef = admin.firestore().collection('transactions').doc(senderId);
 
             const senderRefData = (await senderRef.get()).data();
-            console.log(senderRefData)
             await senderRef.set({
                 walletAmount: senderRefData.walletAmount - senderData.amount
             });
 
             const receiverRefData = (await receiverRef.get()).data();
-            if (isBusinessPayment) {
+            if (isBusinessPayment === true) {
                 const businessRef = admin.firestore().collection('business').doc(req.body.businessData.receivingBusinessId);
                 businessDoc = (await businessRef.get()).data;
 
@@ -77,7 +77,6 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
                     });
                 }
             } else {
-                console.log(receiverRefData)
                 await receiverRef.set({
                     walletAmount: receiverRefData.walletAmount + senderData.amount,
                 });
@@ -186,7 +185,7 @@ router.post('/business/distribute', (req, res) => {
                 };
                 promises.add(receiverRef.collection('history').add(data));
 
-                const walletAmountReceiver = (await receiverRef.get()).walletAmount;
+                const walletAmountReceiver = (await receiverRef.get()).data().walletAmount;
                 await receiverRef.set({
                     walletAmount: walletAmountReceiver + receiver.amount
                 });
@@ -196,7 +195,7 @@ router.post('/business/distribute', (req, res) => {
 
             const businessRef = admin.firestore().collection('business').doc(businessId);
 
-            const businessWalletAmount = (await businessRef.get()).businessWallet;
+            const businessWalletAmount = (await businessRef.get()).data().businessWallet;
             await businessRef.set({
                 businessWallet: businessWalletAmount - totalTip
             });
