@@ -157,7 +157,7 @@ router.post('/business/distribute', (req, res) => {
             message: "Unauthorized"
         });
     }
-
+    console.log("Hit ");
     admin.auth().verifyIdToken(idToken)
         .then(async function (decodedToken) {
 
@@ -191,8 +191,9 @@ router.post('/business/distribute', (req, res) => {
                     walletAmount: walletAmountReceiver + receiver.amount
                 });
             });
-
+            console.log("Before promises");
             await Promise.all(promises);
+            console.log("after promises");
 
             const businessRef = admin.firestore().collection('business').doc(businessId);
 
