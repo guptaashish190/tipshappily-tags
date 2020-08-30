@@ -3,10 +3,6 @@ var router = express.Router()
 
 var admin = require("firebase-admin");
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: "https://tipshappily-b0541.firebaseio.com"
-});
 
 router.post('/tip/handleWalletTransaction', async (req, res) => {
 
