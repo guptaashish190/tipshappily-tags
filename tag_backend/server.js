@@ -6,7 +6,7 @@ const paymentRouter = require('./routes/payments');
 const userRouter = require('./routes/user');
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./admin_sdk_config.json");
+
 
 const app = express();
 const port = 8345;
@@ -21,7 +21,7 @@ app.use(morgan('tiny'));
 
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.applicationDefault(),
     databaseURL: "https://tipshappily-b0541.firebaseio.com"
 });
 
