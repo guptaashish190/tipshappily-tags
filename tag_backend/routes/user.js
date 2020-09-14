@@ -11,7 +11,6 @@ router.get('/validateAdminCode', (req, res) => {
     const code = authorization.split(' ')[1];
 
     const { username } = req.query;
-    console.log(process.env.ADMIN_CODE, code);
     if (process.env.ADMIN_CODE === code && allowedAdmins.includes(username)) {
         return res.send({
             valid: true
