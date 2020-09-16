@@ -1,7 +1,9 @@
-const express = require('express');
-const puppeteer = require('puppeteer');
+var express = require('express')
+var router = express.Router()
+
 
 const tagPageServer = "http://localhost:5000";
+const puppeteer = require('puppeteer');
 
 function getPageName(tagtypeid) {
     let pageName;
