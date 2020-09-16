@@ -1,6 +1,5 @@
-var express = require('express')
-var router = express.Router()
-
+const express = require('express');
+const puppeteer = require('puppeteer');
 
 const tagPageServer = "http://localhost:5000";
 
