@@ -2,24 +2,8 @@ var express = require('express')
 var router = express.Router()
 
 var admin = require("firebase-admin");
-const { allowedAdmins } = require('../config');
 
 
-
-router.get('/validateAdminCode', (req, res) => {
-    const { authorization } = req.headers;
-    const code = authorization.split(' ')[1];
-
-    const { username } = req.query;
-    if (process.env.ADMIN_CODE === code && allowedAdmins.includes(username)) {
-        return res.send({
-            valid: true
-        });
-    }
-    return res.send({
-        valid: false
-    });
-});
 
 router.post('/delete', async (req, res) => {
 

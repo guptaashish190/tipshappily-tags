@@ -46,15 +46,15 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
                 }
             }
 
-            await admin.firestore().collection('transactions').doc(senderId).collection('history').add(senderData);
-            await admin.firestore().collection('transactions').doc(receiverId).collection('history').add(receiverData);
+            admin.firestore().collection('transactions').doc(senderId).collection('history').add(senderData);
+            admin.firestore().collection('transactions').doc(receiverId).collection('history').add(receiverData);
 
             // wallet amount calculation
             const receiverRef = admin.firestore().collection('transactions').doc(receiverId);
             const senderRef = admin.firestore().collection('transactions').doc(senderId);
 
             const senderRefData = (await senderRef.get()).data();
-            await senderRef.update({
+            senderRef.update({
                 walletAmount: senderRefData.walletAmount - senderData.amount
             });
 
@@ -64,16 +64,18 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
                 businessDoc = (await businessRef.get()).data;
 
                 if (businessDoc["employeeKeeps"]) {
-                    await receiverRef.update({
+                    console.log("business employee keeps", receiverRefData.walletAmount + senderData.amount);
+                    receiverRef.update({
                         walletAmount: receiverRefData.walletAmount + senderData.amount,
                     });
                 } else {
-                    await businessRef.update({
+                    console.log("business no employee keeps", businessDoc.businessWallet + senderData.amount);
+                    businessRef.update({
                         businessWallet: businessDoc.businessWallet + senderData.amount,
                     });
                 }
             } else {
-                await receiverRef.update({
+                receiverRef.update({
                     walletAmount: receiverRefData.walletAmount + senderData.amount,
                 });
             }
