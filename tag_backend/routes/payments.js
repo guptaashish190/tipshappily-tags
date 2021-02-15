@@ -54,7 +54,7 @@ router.post('/tip/handleNonWalletTransaction', async (req, res) => {
             const receiverRefData = (await receiverRef.get()).data();
             if (isBusinessPayment) {
                 const businessRef = admin.firestore().collection('business').doc(req.body.businessData.receivingBusinessId);
-                businessDoc = (await businessRef.get()).data;
+                businessDoc = (await businessRef.get()).data();
 
                 if (businessDoc["employeeKeeps"]) {
                     console.log("business employee keeps", receiverRefData.walletAmount, senderData.amount);
