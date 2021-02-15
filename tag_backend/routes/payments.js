@@ -62,7 +62,7 @@ router.post('/tip/handleNonWalletTransaction', async (req, res) => {
                         walletAmount: receiverRefData.walletAmount + senderData.amount,
                     });
                 } else {
-                    console.log("business no employee keeps", businessDoc.businessWallet, senderData.amount);
+                    console.log("business no employee keeps", req.body.businessData.receivingBusinessId, businessDoc, senderData.amount);
                     businessRef.update({
                         businessWallet: businessDoc.businessWallet + senderData.amount,
                     });
