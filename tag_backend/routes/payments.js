@@ -61,15 +61,19 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
             const receiverRefData = (await receiverRef.get()).data();
             if (isBusinessPayment) {
                 const businessRef = admin.firestore().collection('business').doc(req.body.businessData.receivingBusinessId);
-                businessDoc = (await businessRef.get()).data;
+                businessDoc = (await businessRef.get()).data();
 
                 if (businessDoc["employeeKeeps"]) {
-                    console.log("business employee keeps", receiverRefData.walletAmount + senderData.amount);
+                    console.log("business employee keeps");
+console.log("R",receiverRefData.walletAmount);
+console.log("S",senderData.amount);
                     receiverRef.update({
                         walletAmount: receiverRefData.walletAmount + senderData.amount,
                     });
                 } else {
-                    console.log("business no employee keeps", businessDoc.businessWallet + senderData.amount);
+                    console.log("business no employee keeps");
+console.log(businessDoc);
+console.log("R", businessDoc.businessWallet, senderData.amount);
                     businessRef.update({
                         businessWallet: businessDoc.businessWallet + senderData.amount,
                     });
