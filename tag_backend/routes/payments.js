@@ -3,6 +3,89 @@ var router = express.Router()
 
 var admin = require("firebase-admin");
 
+router.post('/tip/handleNonWalletTransaction', async (req, res) => {
+
+    const { transactionData, receiverId, isBusinessPayment } = req.body;
+
+    const authHeader = req.headers.authorization;
+    console.log(req.headers)
+    let idToken;
+    if (authHeader) {
+        idToken = authHeader.split(' ')[1];
+    } else {
+        return res.status(403).json({
+            error: true,
+            message: "Unauthorized"
+        });
+    }
+
+    admin.auth().verifyIdToken(idToken)
+        .then(async function (decodedToken) {
+
+            let senderId = decodedToken.uid;
+            const senderData = {
+                ...transactionData,
+                timestamp: new Date().getTime(),
+                response: 'success',
+                merchant: 'Wallet',
+                role: 'sender'
+            }
+
+            let receiverData = {
+                ...transactionData,
+                timestamp: new Date().getTime(),
+                response: 'success',
+                merchant: 'Wallet',
+                role: 'receiver'
+            }
+            if (isBusinessPayment) {
+                receiverData = {
+                    ...receiverData,
+                    ...req.body.businessData,
+                }
+            }
+
+            admin.firestore().collection('transactions').doc(senderId).collection('history').add(senderData);
+            admin.firestore().collection('transactions').doc(receiverId).collection('history').add(receiverData);
+
+            // wallet amount calculation
+            const receiverRef = admin.firestore().collection('transactions').doc(receiverId);
+
+            const receiverRefData = (await receiverRef.get()).data();
+            if (isBusinessPayment) {
+                const businessRef = admin.firestore().collection('business').doc(req.body.businessData.receivingBusinessId);
+                businessDoc = (await businessRef.get()).data;
+
+                if (businessDoc["employeeKeeps"]) {
+                    console.log("business employee keeps", receiverRefData.walletAmount, senderData.amount);
+                    receiverRef.update({
+                        walletAmount: receiverRefData.walletAmount + senderData.amount,
+                    });
+                } else {
+                    console.log("business no employee keeps", businessDoc.businessWallet + senderData.amount);
+                    businessRef.update({
+                        businessWallet: businessDoc.businessWallet + senderData.amount,
+                    });
+                }
+            } else {
+                receiverRef.update({
+                    walletAmount: receiverRefData.walletAmount + senderData.amount,
+                });
+            }
+
+
+            res.json({
+                error: false,
+                message: 'success'
+            });
+        }).catch(function (error) {
+            console.log(error)
+            res.status(400).json({
+                error: true,
+                message: error
+            });
+        });
+});
 
 router.post('/tip/handleWalletTransaction', async (req, res) => {
 
@@ -65,15 +148,15 @@ router.post('/tip/handleWalletTransaction', async (req, res) => {
 
                 if (businessDoc["employeeKeeps"]) {
                     console.log("business employee keeps");
-console.log("R",receiverRefData.walletAmount);
-console.log("S",senderData.amount);
+                    console.log("R", receiverRefData.walletAmount);
+                    console.log("S", senderData.amount);
                     receiverRef.update({
                         walletAmount: receiverRefData.walletAmount + senderData.amount,
                     });
                 } else {
                     console.log("business no employee keeps");
-console.log(businessDoc);
-console.log("R", businessDoc.businessWallet, senderData.amount);
+                    console.log(businessDoc);
+                    console.log("R", businessDoc.businessWallet, senderData.amount);
                     businessRef.update({
                         businessWallet: businessDoc.businessWallet + senderData.amount,
                     });
